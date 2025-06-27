@@ -9,12 +9,12 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-Explain how your project works
+It is a simple RISC-V 32-bit implementation.
 
 ## How to test
 
-Explain how to use your project
+There is no implemented test yet.
 
 ## External hardware
 
-List external hardware used in your project (e.g. PMOD, LED display, etc), if any
+1 input to select boot loader, 1 input for UART Rx, 1 output for Uart Tx, 8 input/outputs for GPIOs
