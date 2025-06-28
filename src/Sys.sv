@@ -29,7 +29,7 @@ module Sys(
   wire [31:0] _m_core_io_b_mem_wdata;
   reg         r_valid;
   reg  [11:0] r_addr;
-  wire        _GEN = _m_bootloader_io_b_mem_addr < 12'h80;
+  wire        _GEN = _m_bootloader_io_b_mem_addr < 12'h60;
   wire [6:0]  _m_ram_io_b_port_wen_T_1 =
     {3'h0, _m_bootloader_io_b_mem_wen} << _m_bootloader_io_b_mem_addr[1:0];
   wire [62:0] _m_ram_io_b_port_wdata_T_2 =
@@ -45,7 +45,7 @@ module Sys(
     _GEN
       ? _m_ram_io_b_port_rdata
       : _GEN_0 ? _m_gpio8_io_b_mem_rdata : _m_uart_io_b_mem_rdata;
-  wire        _GEN_5 = _m_core_io_b_mem_addr < 12'h80;
+  wire        _GEN_5 = _m_core_io_b_mem_addr < 12'h60;
   wire [6:0]  _m_ram_io_b_port_wen_T_3 =
     {3'h0, _m_core_io_b_mem_wen} << _m_core_io_b_mem_addr[1:0];
   wire [62:0] _m_ram_io_b_port_wdata_T_5 =
@@ -59,7 +59,7 @@ module Sys(
     _GEN_5
       ? _m_ram_io_b_port_rdata
       : _GEN_6 ? _m_gpio8_io_b_mem_rdata : _m_uart_io_b_mem_rdata;
-  wire        _GEN_10 = r_addr < 12'h80;
+  wire        _GEN_10 = r_addr < 12'h60;
   wire [31:0] _GEN_11 = {27'h0, r_addr[1:0], 3'h0};
   wire        _GEN_12 = r_addr[11] & r_addr < 12'h840;
   wire        _GEN_13 = r_addr > 12'h83F & r_addr < 12'h880;
