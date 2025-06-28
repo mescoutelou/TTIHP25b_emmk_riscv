@@ -8,16 +8,19 @@ module Bru(
   output [31:0] io_o_res
 );
 
-  wire       _GEN = (&io_i_uop) & io_i_s1 >= io_i_s2;
+  wire       w_cmp_eq = io_i_s1 == io_i_s2;
+  wire       w_cmp_slow = $signed(io_i_s1) < $signed(io_i_s2);
+  wire       w_cmp_ulow = io_i_s1 < io_i_s2;
+  wire       _GEN = (&io_i_uop) & ~w_cmp_ulow;
   wire [7:0] _GEN_0 =
     {{_GEN},
-     {io_i_s1 < io_i_s2},
-     {$signed(io_i_s1) >= $signed(io_i_s2)},
-     {$signed(io_i_s1) < $signed(io_i_s2)},
+     {w_cmp_ulow},
+     {~w_cmp_slow},
+     {w_cmp_slow},
      {_GEN},
      {_GEN},
-     {io_i_s1 != io_i_s2},
-     {io_i_s1 == io_i_s2}};
+     {~w_cmp_eq},
+     {w_cmp_eq}};
   assign io_o_br = io_i_uop == 3'h2 | _GEN_0[io_i_uop];
   assign io_o_res = {20'h0, io_i_pc + 12'h4};
 endmodule
