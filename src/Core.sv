@@ -42,6 +42,7 @@ module Core(
   wire             _m_fsm_io_o_mem_ack;
   wire             _m_fsm_io_o_wb;
   reg  [11:0]      r_pc;
+  reg  [31:0]      r_instr;
   reg  [2:0]       r_ctrl_alu_uop;
   reg              r_ctrl_alu_signed;
   reg  [2:0]       r_ctrl_bru_uop;
@@ -54,10 +55,9 @@ module Core(
   reg  [31:0]      r_s1_res;
   reg  [31:0]      r_s2_pc;
   reg  [31:0]      r_s3_br;
-  wire             _GEN = r_ctrl_mem_size == 2'h2;
-  wire             _GEN_0 = _m_fsm_io_o_bru & r_ctrl_bru_pc_rel;
-  wire [3:0][31:0] _GEN_1 =
-    {{_GEN | _m_fsm_io_o_instr ? io_b_mem_rdata : r_s1_res},
+  wire             _GEN = _m_fsm_io_o_bru & r_ctrl_bru_pc_rel;
+  wire [3:0][31:0] _GEN_0 =
+    {{r_s1_res},
      {io_b_mem_rdata},
      {r_ctrl_mem_signed
         ? {{16{io_b_mem_rdata[15]}}, io_b_mem_rdata[15:0]}
@@ -65,7 +65,7 @@ module Core(
      {r_ctrl_mem_signed
         ? {{24{io_b_mem_rdata[7]}}, io_b_mem_rdata[7:0]}
         : {24'h0, io_b_mem_rdata[7:0]}}};
-  wire             _GEN_2 = _m_fsm_io_o_alu & _m_fsm_io_o_mem_req;
+  wire             _GEN_1 = _m_fsm_io_o_alu & _m_fsm_io_o_mem_req;
   always @(posedge clock) begin
     if (reset)
       r_pc <= 12'h0;
@@ -75,6 +75,8 @@ module Core(
       else
         r_pc <= r_pc + 12'h4;
     end
+    if (_m_fsm_io_o_instr)
+      r_instr <= io_b_mem_rdata;
     if (_m_fsm_io_o_decoder) begin
       r_ctrl_alu_uop <= _m_decoder_io_o_ctrl_alu_uop;
       r_ctrl_alu_signed <= _m_decoder_io_o_ctrl_alu_signed;
@@ -98,13 +100,11 @@ module Core(
       r_s3_br <= {31'h0, _m_bru_io_o_br};
     end
     else begin
-      if (_GEN_2 | _m_fsm_io_o_alu)
+      if (_GEN_1 | _m_fsm_io_o_alu)
         r_s1_res <= _m_alu_io_o_res;
       else if (_m_fsm_io_o_mem_ack & ~r_ctrl_mem_rw)
-        r_s1_res <= _GEN_1[r_ctrl_mem_size];
-      else if (_m_fsm_io_o_instr)
-        r_s1_res <= io_b_mem_rdata;
-      if (_GEN_2 | ~(_m_fsm_io_o_alu | _m_fsm_io_o_mem_ack)) begin
+        r_s1_res <= _GEN_0[r_ctrl_mem_size];
+      if (_GEN_1 | ~(_m_fsm_io_o_alu | _m_fsm_io_o_mem_ack)) begin
       end
       else
         r_s3_br <= 32'h0;
@@ -136,7 +136,7 @@ module Core(
   );
   Decoder m_decoder (
     .io_i_pc              (r_pc),
-    .io_i_instr           (r_s1_res),
+    .io_i_instr           (r_instr),
     .io_o_seq             (_m_decoder_io_o_seq),
     .io_o_ctrl_alu_uop    (_m_decoder_io_o_ctrl_alu_uop),
     .io_o_ctrl_alu_signed (_m_decoder_io_o_ctrl_alu_signed),
@@ -159,8 +159,8 @@ module Core(
   Alu m_alu (
     .io_i_uop    (r_ctrl_alu_uop),
     .io_i_signed (r_ctrl_alu_signed),
-    .io_i_s1     (_GEN_0 ? r_s3_br : r_s1_res),
-    .io_i_s2     (_GEN_0 ? {20'h0, r_pc} : r_s2_pc),
+    .io_i_s1     (_GEN ? r_s3_br : r_s1_res),
+    .io_i_s2     (_GEN ? {20'h0, r_pc} : r_s2_pc),
     .io_o_res    (_m_alu_io_o_res)
   );
   Bru m_bru (
@@ -175,7 +175,9 @@ module Core(
   assign io_b_mem_addr = {_m_fsm_io_o_mem_req ? r_s1_res[11:2] : r_pc[11:2], 2'h0};
   assign io_b_mem_wen =
     _m_fsm_io_o_mem_req & r_ctrl_mem_rw
-      ? (r_ctrl_mem_size == 2'h0 ? 4'h1 : r_ctrl_mem_size == 2'h1 ? 4'h3 : {4{_GEN}})
+      ? (r_ctrl_mem_size == 2'h0
+           ? 4'h1
+           : r_ctrl_mem_size == 2'h1 ? 4'h3 : {4{r_ctrl_mem_size == 2'h2}})
       : 4'h0;
   assign io_b_mem_wdata = r_s3_br;
 endmodule
