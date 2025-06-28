@@ -10,7 +10,7 @@ module Bootloader(
   output [7:0]  io_o_data,
   output        io_o_bl,
                 io_b_mem_valid,
-  output [15:0] io_b_mem_addr,
+  output [11:0] io_b_mem_addr,
   output [3:0]  io_b_mem_wen,
   output [31:0] io_b_mem_wdata,
   input         io_b_mem_ready,
@@ -26,7 +26,7 @@ module Bootloader(
   reg  [7:0]  r_offset_0;
   reg  [7:0]  r_offset_1;
   reg         r_bl;
-  reg  [15:0] r_mem_addr;
+  reg  [11:0] r_mem_addr;
   reg  [3:0]  r_mem_wen;
   reg  [7:0]  r_mem_data;
   wire        _GEN = r_cstate == 5'h0;
@@ -52,20 +52,21 @@ module Bootloader(
   wire        _GEN_19 = _GEN_6 | _GEN_7 | _GEN_8 | _GEN_9 | _GEN_10;
   wire        _GEN_20 = _GEN_10 | _GEN_11;
   wire        _GEN_21 = _GEN_7 | _GEN_8 | _GEN_9 | _GEN_20;
-  wire        _GEN_22 = io_i_data == 8'h0;
-  wire        _GEN_23 = _GEN_1 & io_i_valid;
-  wire        _GEN_24 = io_i_data == 8'h1;
-  wire        _GEN_25 = io_i_data == 8'h2;
-  wire        _GEN_26 = io_i_data == 8'h3;
-  wire        _GEN_27 = _GEN | _GEN_0;
-  wire        _GEN_28 = io_i_valid & ~(r_byte_cnt[0]);
-  wire        _GEN_29 = io_i_valid & r_byte_cnt[0];
-  wire        _GEN_30 = r_byte_cnt == 16'h1;
-  wire        _GEN_31 = io_i_valid & _GEN_30;
-  wire        _GEN_32 = r_byte_cnt == {r_offset_1, r_offset_0} - 16'h1;
-  wire        _GEN_33 = _GEN_2 | _GEN_3 | _GEN_4;
-  wire        _GEN_34 = _GEN_15 & io_i_ready;
-  wire        _GEN_35 = _GEN_7 | _GEN_8;
+  wire [11:0] _GEN_22 = {r_start_1[3:0], r_start_0};
+  wire        _GEN_23 = io_i_data == 8'h0;
+  wire        _GEN_24 = _GEN_1 & io_i_valid;
+  wire        _GEN_25 = io_i_data == 8'h1;
+  wire        _GEN_26 = io_i_data == 8'h2;
+  wire        _GEN_27 = io_i_data == 8'h3;
+  wire        _GEN_28 = _GEN | _GEN_0;
+  wire        _GEN_29 = io_i_valid & ~(r_byte_cnt[0]);
+  wire        _GEN_30 = io_i_valid & r_byte_cnt[0];
+  wire        _GEN_31 = r_byte_cnt == 16'h1;
+  wire        _GEN_32 = io_i_valid & _GEN_31;
+  wire        _GEN_33 = r_byte_cnt == {r_offset_1, r_offset_0} - 16'h1;
+  wire        _GEN_34 = _GEN_2 | _GEN_3 | _GEN_4;
+  wire        _GEN_35 = _GEN_15 & io_i_ready;
+  wire        _GEN_36 = _GEN_7 | _GEN_8;
   always @(posedge clock) begin
     if (reset) begin
       r_cstate <= 5'h0;
@@ -76,12 +77,12 @@ module Bootloader(
         r_cstate <= io_i_boot ? 5'h1 : 5'h4;
       else if (_GEN_0) begin
         if (io_i_valid)
-          r_cstate <= _GEN_22 ? 5'h4 : 5'h2;
+          r_cstate <= _GEN_23 ? 5'h4 : 5'h2;
       end
       else if (_GEN_1) begin
         if (io_i_valid)
           r_cstate <=
-            _GEN_22 ? 5'h5 : _GEN_24 ? 5'h6 : _GEN_25 ? 5'hB : _GEN_26 ? 5'hC : 5'h5;
+            _GEN_23 ? 5'h5 : _GEN_25 ? 5'h6 : _GEN_26 ? 5'hB : _GEN_27 ? 5'hC : 5'h5;
       end
       else if (_GEN_2) begin
         if (io_i_ready)
@@ -91,11 +92,11 @@ module Bootloader(
         if (_GEN_4)
           r_cstate <= _GEN_18;
         else if (_GEN_5) begin
-          if (_GEN_31)
+          if (_GEN_32)
             r_cstate <= 5'h7;
         end
         else if (_GEN_6) begin
-          if (_GEN_31)
+          if (_GEN_32)
             r_cstate <= 5'h8;
         end
         else if (_GEN_7) begin
@@ -107,17 +108,17 @@ module Bootloader(
             r_cstate <= 5'hA;
         end
         else if (_GEN_9)
-          r_cstate <= _GEN_32 ? _GEN_18 : 5'h8;
+          r_cstate <= _GEN_33 ? _GEN_18 : 5'h8;
         else if (_GEN_10) begin
           if (io_i_ready)
             r_cstate <= _GEN_18;
         end
         else if (_GEN_11) begin
-          if (_GEN_31)
+          if (_GEN_32)
             r_cstate <= 5'hD;
         end
         else if (_GEN_12) begin
-          if (_GEN_31)
+          if (_GEN_32)
             r_cstate <= 5'hE;
         end
         else if (_GEN_13) begin
@@ -126,33 +127,33 @@ module Bootloader(
         end
         else if (_GEN_14)
           r_cstate <= 5'h10;
-        else if (_GEN_34)
-          r_cstate <= _GEN_32 ? {4'h1, _GEN_17} : 5'hE;
+        else if (_GEN_35)
+          r_cstate <= _GEN_33 ? {4'h1, _GEN_17} : 5'hE;
       end
       r_bl <= (_GEN | _GEN_0 | _GEN_1 | _GEN_2 | ~_GEN_3) & r_bl;
     end
     if (_GEN)
       r_num_cnt <= 8'h0;
-    else if (_GEN_0 | ~_GEN_23) begin
+    else if (_GEN_0 | ~_GEN_24) begin
     end
     else
       r_num_cnt <= r_num_cnt + 8'h1;
-    if (~_GEN_27) begin
+    if (~_GEN_28) begin
       if (_GEN_1) begin
-        if (~io_i_valid | _GEN_22 | ~(_GEN_24 | _GEN_25 | _GEN_26)) begin
+        if (~io_i_valid | _GEN_23 | ~(_GEN_25 | _GEN_26 | _GEN_27)) begin
         end
         else
           r_byte_cnt <= 16'h0;
-        if (~io_i_valid | _GEN_22 | _GEN_24 | ~_GEN_25) begin
+        if (~io_i_valid | _GEN_23 | _GEN_25 | ~_GEN_26) begin
         end
         else
           r_mem_data <= 8'hAA;
       end
       else begin
-        if (~_GEN_33) begin
+        if (~_GEN_34) begin
           if (_GEN_5) begin
             if (io_i_valid) begin
-              if (_GEN_30)
+              if (_GEN_31)
                 r_byte_cnt <= 16'h0;
               else
                 r_byte_cnt <= r_byte_cnt + 16'h1;
@@ -160,15 +161,15 @@ module Bootloader(
           end
           else if (_GEN_6) begin
             if (io_i_valid) begin
-              if (_GEN_30)
+              if (_GEN_31)
                 r_byte_cnt <= 16'h0;
               else
                 r_byte_cnt <= r_byte_cnt + 16'h1;
             end
           end
-          else if (~_GEN_35) begin
+          else if (~_GEN_36) begin
             if (_GEN_9) begin
-              if (_GEN_32)
+              if (_GEN_33)
                 r_byte_cnt <= 16'h0;
               else
                 r_byte_cnt <= r_byte_cnt + 16'h1;
@@ -176,7 +177,7 @@ module Bootloader(
             else if (~_GEN_10) begin
               if (_GEN_11) begin
                 if (io_i_valid) begin
-                  if (_GEN_30)
+                  if (_GEN_31)
                     r_byte_cnt <= 16'h0;
                   else
                     r_byte_cnt <= r_byte_cnt + 16'h1;
@@ -184,15 +185,15 @@ module Bootloader(
               end
               else if (_GEN_12) begin
                 if (io_i_valid) begin
-                  if (_GEN_30)
+                  if (_GEN_31)
                     r_byte_cnt <= 16'h0;
                   else
                     r_byte_cnt <= r_byte_cnt + 16'h1;
                 end
               end
-              else if (_GEN_16 | ~_GEN_34) begin
+              else if (_GEN_16 | ~_GEN_35) begin
               end
-              else if (_GEN_32)
+              else if (_GEN_33)
                 r_byte_cnt <= 16'h0;
               else
                 r_byte_cnt <= r_byte_cnt + 16'h1;
@@ -216,19 +217,19 @@ module Bootloader(
     end
     else
       r_num <= io_i_data;
-    if (~(_GEN | _GEN_0 | _GEN_1 | _GEN_33)) begin
+    if (~(_GEN | _GEN_0 | _GEN_1 | _GEN_34)) begin
       if (_GEN_5) begin
-        if (_GEN_28)
-          r_start_0 <= io_i_data;
         if (_GEN_29)
+          r_start_0 <= io_i_data;
+        if (_GEN_30)
           r_start_1 <= io_i_data;
       end
       else begin
-        if (_GEN_19 | ~(_GEN_11 & _GEN_28)) begin
+        if (_GEN_19 | ~(_GEN_11 & _GEN_29)) begin
         end
         else
           r_start_0 <= io_i_data;
-        if (_GEN_19 | ~(_GEN_11 & _GEN_29)) begin
+        if (_GEN_19 | ~(_GEN_11 & _GEN_30)) begin
         end
         else
           r_start_1 <= io_i_data;
@@ -236,45 +237,45 @@ module Bootloader(
     end
     if (~(_GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5)) begin
       if (_GEN_6) begin
-        if (_GEN_28)
-          r_offset_0 <= io_i_data;
         if (_GEN_29)
+          r_offset_0 <= io_i_data;
+        if (_GEN_30)
           r_offset_1 <= io_i_data;
-        if (_GEN_31)
-          r_mem_addr <= {r_start_1, r_start_0};
+        if (_GEN_32)
+          r_mem_addr <= _GEN_22;
       end
       else begin
-        if (_GEN_21 | ~(_GEN_12 & _GEN_28)) begin
-        end
-        else
-          r_offset_0 <= io_i_data;
         if (_GEN_21 | ~(_GEN_12 & _GEN_29)) begin
         end
         else
+          r_offset_0 <= io_i_data;
+        if (_GEN_21 | ~(_GEN_12 & _GEN_30)) begin
+        end
+        else
           r_offset_1 <= io_i_data;
-        if (~_GEN_35) begin
+        if (~_GEN_36) begin
           if (_GEN_9) begin
-            if (~_GEN_32)
-              r_mem_addr <= r_mem_addr + 16'h1;
+            if (~_GEN_33)
+              r_mem_addr <= r_mem_addr + 12'h1;
           end
           else if (~_GEN_20) begin
             if (_GEN_12) begin
-              if (_GEN_31)
-                r_mem_addr <= {r_start_1, r_start_0};
+              if (_GEN_32)
+                r_mem_addr <= _GEN_22;
             end
-            else if (_GEN_16 | ~_GEN_34 | _GEN_32) begin
+            else if (_GEN_16 | ~_GEN_35 | _GEN_33) begin
             end
             else
-              r_mem_addr <= r_mem_addr + 16'h1;
+              r_mem_addr <= r_mem_addr + 12'h1;
           end
         end
       end
     end
-    if (_GEN_27 | ~_GEN_23 | _GEN_22) begin
+    if (_GEN_28 | ~_GEN_24 | _GEN_23) begin
     end
-    else if (_GEN_24)
+    else if (_GEN_25)
       r_mem_wen <= 4'h1;
-    else if (_GEN_25 | ~_GEN_26) begin
+    else if (_GEN_26 | ~_GEN_27) begin
     end
     else
       r_mem_wen <= 4'h0;

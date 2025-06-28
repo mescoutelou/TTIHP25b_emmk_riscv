@@ -4,7 +4,7 @@ module Core(
                 reset,
                 io_i_bl,
   output        io_b_mem_valid,
-  output [15:0] io_b_mem_addr,
+  output [11:0] io_b_mem_addr,
   output [3:0]  io_b_mem_wen,
   output [31:0] io_b_mem_wdata,
   input  [31:0] io_b_mem_rdata
@@ -41,7 +41,7 @@ module Core(
   wire             _m_fsm_io_o_mem_req;
   wire             _m_fsm_io_o_mem_ack;
   wire             _m_fsm_io_o_wb;
-  reg  [15:0]      r_pc;
+  reg  [11:0]      r_pc;
   reg  [31:0]      r_instr;
   reg  [2:0]       r_ctrl_alu_uop;
   reg              r_ctrl_alu_signed;
@@ -68,12 +68,12 @@ module Core(
   wire             _GEN_1 = _m_fsm_io_o_alu & _m_fsm_io_o_mem_req;
   always @(posedge clock) begin
     if (reset)
-      r_pc <= 16'h0;
+      r_pc <= 12'h0;
     else if (_m_fsm_io_o_wb) begin
       if (r_s3_br[0])
-        r_pc <= r_s2_pc[15:0];
+        r_pc <= r_s2_pc[11:0];
       else
-        r_pc <= r_pc + 16'h4;
+        r_pc <= r_pc + 12'h4;
     end
     if (_m_fsm_io_o_instr)
       r_instr <= io_b_mem_rdata;
@@ -160,7 +160,7 @@ module Core(
     .io_i_uop    (r_ctrl_alu_uop),
     .io_i_signed (r_ctrl_alu_signed),
     .io_i_s1     (_GEN ? r_s3_br : r_s1_res),
-    .io_i_s2     (_GEN ? {16'h0, r_pc} : r_s2_pc),
+    .io_i_s2     (_GEN ? {20'h0, r_pc} : r_s2_pc),
     .io_o_res    (_m_alu_io_o_res)
   );
   Bru m_bru (
@@ -172,7 +172,7 @@ module Core(
     .io_o_res (_m_bru_io_o_res)
   );
   assign io_b_mem_valid = _m_fsm_io_o_mem_req ? ~_m_fsm_io_o_alu : _m_fsm_io_o_fetch;
-  assign io_b_mem_addr = {_m_fsm_io_o_mem_req ? r_s1_res[15:2] : r_pc[15:2], 2'h0};
+  assign io_b_mem_addr = {_m_fsm_io_o_mem_req ? r_s1_res[11:2] : r_pc[11:2], 2'h0};
   assign io_b_mem_wen =
     _m_fsm_io_o_mem_req & r_ctrl_mem_rw
       ? (r_ctrl_mem_size == 2'h0

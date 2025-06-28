@@ -14,7 +14,7 @@ module Sys(
   wire [7:0]  _m_bootloader_io_o_data;
   wire        _m_bootloader_io_o_bl;
   wire        _m_bootloader_io_b_mem_valid;
-  wire [15:0] _m_bootloader_io_b_mem_addr;
+  wire [11:0] _m_bootloader_io_b_mem_addr;
   wire [3:0]  _m_bootloader_io_b_mem_wen;
   wire [31:0] _m_bootloader_io_b_mem_wdata;
   wire [31:0] _m_uart_io_b_mem_rdata;
@@ -24,34 +24,33 @@ module Sys(
   wire [31:0] _m_gpio8_io_b_mem_rdata;
   wire [31:0] _m_ram_io_b_port_rdata;
   wire        _m_core_io_b_mem_valid;
-  wire [15:0] _m_core_io_b_mem_addr;
+  wire [11:0] _m_core_io_b_mem_addr;
   wire [3:0]  _m_core_io_b_mem_wen;
   wire [31:0] _m_core_io_b_mem_wdata;
   reg         r_valid;
-  reg  [31:0] r_addr;
-  wire        _GEN = _m_bootloader_io_b_mem_addr < 16'h80;
+  reg  [11:0] r_addr;
+  wire        _GEN = _m_bootloader_io_b_mem_addr < 12'h80;
   wire [6:0]  _m_ram_io_b_port_wen_T_1 =
     {3'h0, _m_bootloader_io_b_mem_wen} << _m_bootloader_io_b_mem_addr[1:0];
   wire [62:0] _m_ram_io_b_port_wdata_T_2 =
     {31'h0, _m_bootloader_io_b_mem_wdata}
     << {58'h0, _m_bootloader_io_b_mem_addr[1:0], 3'h0};
   wire        _GEN_0 =
-    (|(_m_bootloader_io_b_mem_addr[15:11])) & _m_bootloader_io_b_mem_addr < 16'h840;
+    _m_bootloader_io_b_mem_addr[11] & _m_bootloader_io_b_mem_addr < 12'h840;
   wire        _GEN_1 =
-    _m_bootloader_io_b_mem_addr > 16'h83F & _m_bootloader_io_b_mem_addr < 16'h880;
+    _m_bootloader_io_b_mem_addr > 12'h83F & _m_bootloader_io_b_mem_addr < 12'h880;
   wire        _GEN_2 = _GEN | _GEN_0;
   wire        _GEN_3 = _m_bootloader_io_o_bl & (_GEN_2 | _GEN_1);
   wire [31:0] _GEN_4 =
     _GEN
       ? _m_ram_io_b_port_rdata
       : _GEN_0 ? _m_gpio8_io_b_mem_rdata : _m_uart_io_b_mem_rdata;
-  wire        _GEN_5 = _m_core_io_b_mem_addr < 16'h80;
+  wire        _GEN_5 = _m_core_io_b_mem_addr < 12'h80;
   wire [6:0]  _m_ram_io_b_port_wen_T_3 =
     {3'h0, _m_core_io_b_mem_wen} << _m_core_io_b_mem_addr[1:0];
   wire [62:0] _m_ram_io_b_port_wdata_T_5 =
     {31'h0, _m_core_io_b_mem_wdata} << {58'h0, _m_core_io_b_mem_addr[1:0], 3'h0};
-  wire        _GEN_6 =
-    (|(_m_core_io_b_mem_addr[15:11])) & _m_core_io_b_mem_addr < 16'h840;
+  wire        _GEN_6 = _m_core_io_b_mem_addr[11] & _m_core_io_b_mem_addr < 12'h840;
   wire [3:0]  _GEN_7 =
     _m_bootloader_io_o_bl ? _m_bootloader_io_b_mem_wen : _m_core_io_b_mem_wen;
   wire [31:0] _GEN_8 =
@@ -60,10 +59,10 @@ module Sys(
     _GEN_5
       ? _m_ram_io_b_port_rdata
       : _GEN_6 ? _m_gpio8_io_b_mem_rdata : _m_uart_io_b_mem_rdata;
-  wire        _GEN_10 = r_addr < 32'h80;
+  wire        _GEN_10 = r_addr < 12'h80;
   wire [31:0] _GEN_11 = {27'h0, r_addr[1:0], 3'h0};
-  wire        _GEN_12 = (|(r_addr[31:11])) & r_addr < 32'h840;
-  wire        _GEN_13 = r_addr > 32'h83F & r_addr < 32'h880;
+  wire        _GEN_12 = r_addr[11] & r_addr < 12'h840;
+  wire        _GEN_13 = r_addr > 12'h83F & r_addr < 12'h880;
   always @(posedge clock) begin
     if (reset)
       r_valid <= 1'h0;
@@ -77,8 +76,7 @@ module Sys(
     end
     else
       r_addr <=
-        {16'h0,
-         _m_bootloader_io_o_bl ? _m_bootloader_io_b_mem_addr : _m_core_io_b_mem_addr};
+        _m_bootloader_io_o_bl ? _m_bootloader_io_b_mem_addr : _m_core_io_b_mem_addr;
   end // always @(posedge)
   Core m_core (
     .clock          (clock),
@@ -143,8 +141,8 @@ module Sys(
     .io_b_mem_valid
       (_m_bootloader_io_o_bl
          ? ~_GEN_2 & _GEN_1 & _m_bootloader_io_b_mem_valid
-         : ~(_GEN_5 | _GEN_6) & _m_core_io_b_mem_addr > 16'h83F
-           & _m_core_io_b_mem_addr < 16'h880 & _m_core_io_b_mem_valid),
+         : ~(_GEN_5 | _GEN_6) & _m_core_io_b_mem_addr > 12'h83F
+           & _m_core_io_b_mem_addr < 12'h880 & _m_core_io_b_mem_valid),
     .io_b_mem_addr
       (_m_bootloader_io_o_bl
          ? _m_bootloader_io_b_mem_addr[4:0]

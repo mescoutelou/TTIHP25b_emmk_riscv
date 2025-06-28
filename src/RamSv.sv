@@ -4,7 +4,7 @@
  * Created Date: 2025-04-22 08:23:20 am
  * Author: Mathieu Escouteloup
  * -----
- * Last Modified: 2025-04-24 01:15:19 pm
+ * Last Modified: 2025-06-27 09:52:20 am
  * Modified By: Mathieu Escouteloup
  * Email: mathieu.escouteloup@enseirb-matmeca.fr
  * -----
@@ -57,11 +57,11 @@ module RamSv
   // ******************************
   always_ff @(posedge i_clock) begin
     if (i_reset) begin
-      o_rdata = 'h0;
+      o_rdata <= 'h0;
     end
     else begin
       if (i_en) begin
-        o_rdata = r_mem[i_addr];
+        o_rdata <= r_mem[i_addr];
       end
     end
   end
@@ -73,7 +73,7 @@ module RamSv
     if (~i_reset) begin
       for (int db = 0; db < N_DATA_BYTE; db++) begin
         if (i_en && i_wen[db]) begin
-          r_mem[i_addr][db*8 +: 8] = i_wdata[db*8 +: 8];
+          r_mem[i_addr][db*8 +: 8] <= i_wdata[db*8 +: 8];
         end
       end  
     end    
