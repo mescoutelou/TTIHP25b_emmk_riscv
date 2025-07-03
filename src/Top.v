@@ -34,14 +34,14 @@ module tt_um_emmk_riscv (
   wire [7:0] w_gpio_out;
   wire [7:0] w_gpio_in;
 
-  assign w_gpio_in[0] = (!w_gpio_eno & uio_in[0]) | ui_in[0];
-  assign w_gpio_in[1] = (!w_gpio_eno & uio_in[1]) | ui_in[1];
-  assign w_gpio_in[2] = (!w_gpio_eno & uio_in[2]) | ui_in[2];
-  assign w_gpio_in[3] = (!w_gpio_eno & uio_in[3]) | ui_in[3];
-  assign w_gpio_in[4] = (!w_gpio_eno & uio_in[4]) | ui_in[4];
-  assign w_gpio_in[5] = (!w_gpio_eno & uio_in[5]) | ui_in[5];
-  assign w_gpio_in[6] = (!w_gpio_eno & uio_in[6]) | ui_in[6];
-  assign w_gpio_in[7] = (!w_gpio_eno & uio_in[7]) | ui_in[7];
+  assign w_gpio_in[0] = (!w_gpio_eno[0] & uio_in[0]) | ui_in[0];
+  assign w_gpio_in[1] = (!w_gpio_eno[1] & uio_in[1]) | ui_in[1];
+  assign w_gpio_in[2] = (!w_gpio_eno[2] & uio_in[2]) | ui_in[2];
+  assign w_gpio_in[3] = (!w_gpio_eno[3] & uio_in[3]) | ui_in[3];
+  assign w_gpio_in[4] = (!w_gpio_eno[4] & uio_in[4]) | ui_in[4];
+  assign w_gpio_in[5] = (!w_gpio_eno[5] & uio_in[5]) | ui_in[5];
+  assign w_gpio_in[6] = (!w_gpio_eno[6] & uio_in[6]) | ui_in[6];
+  assign w_gpio_in[7] = (!w_gpio_eno[7] & uio_in[7]) | ui_in[7];
 
   assign uio_oe = w_gpio_eno;
 
