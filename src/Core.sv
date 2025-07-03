@@ -22,9 +22,9 @@ module Core(
   wire [1:0]       _m_decoder_io_o_ctrl_mem_size;
   wire             _m_decoder_io_o_ctrl_mem_signed;
   wire             _m_decoder_io_o_ctrl_wb_en;
-  wire [3:0]       _m_decoder_io_o_ctrl_wb_addr;
-  wire [3:0]       _m_decoder_io_o_rs1;
-  wire [3:0]       _m_decoder_io_o_rs2;
+  wire [2:0]       _m_decoder_io_o_ctrl_wb_addr;
+  wire [2:0]       _m_decoder_io_o_rs1;
+  wire [2:0]       _m_decoder_io_o_rs2;
   wire             _m_decoder_io_o_s1_reg;
   wire [31:0]      _m_decoder_io_o_s1_data;
   wire             _m_decoder_io_o_s2_reg;
@@ -50,7 +50,7 @@ module Core(
   reg  [1:0]       r_ctrl_mem_size;
   reg              r_ctrl_mem_signed;
   reg              r_ctrl_wb_en;
-  reg  [3:0]       r_ctrl_wb_addr;
+  reg  [2:0]       r_ctrl_wb_addr;
   reg  [31:0]      r_s1_res;
   reg  [31:0]      r_s2_pc;
   reg  [31:0]      r_s3_br;

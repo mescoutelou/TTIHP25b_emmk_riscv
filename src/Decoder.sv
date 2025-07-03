@@ -11,7 +11,7 @@ module Decoder(
   output [1:0]  io_o_ctrl_mem_size,
   output        io_o_ctrl_mem_signed,
                 io_o_ctrl_wb_en,
-  output [3:0]  io_o_ctrl_wb_addr,
+  output [2:0]  io_o_ctrl_wb_addr,
                 io_o_rs1,
                 io_o_rs2,
   output        io_o_s1_reg,
@@ -82,9 +82,9 @@ module Decoder(
           : ~_GEN_16 | _GEN_5 ? 2'h0 : _GEN_6 ? 2'h1 : _GEN_14;
   assign io_o_ctrl_mem_signed = ~_GEN_15 & _GEN_12 & (_GEN_5 | ~_GEN_7 & _GEN_6);
   assign io_o_ctrl_wb_en = _GEN_23 | ~_GEN_3 & (_GEN_12 | ~_GEN_16 & (_GEN_17 | _GEN_21));
-  assign io_o_ctrl_wb_addr = io_i_instr[10:7];
-  assign io_o_rs1 = io_i_instr[18:15];
-  assign io_o_rs2 = io_i_instr[23:20];
+  assign io_o_ctrl_wb_addr = io_i_instr[9:7];
+  assign io_o_rs1 = io_i_instr[17:15];
+  assign io_o_rs2 = io_i_instr[22:20];
   assign io_o_s1_reg = ~(_GEN | _GEN_0 | _GEN_1) & (_GEN_2 | _GEN_3 | _GEN_25 | _GEN_21);
   assign io_o_s1_data = _GEN | ~_GEN_0 ? 32'h0 : {20'h0, io_i_pc};
   assign io_o_s2_reg = ~_GEN_23 & (_GEN_3 | ~_GEN_25 & _GEN_21);
