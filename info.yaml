@@ -1,6 +1,6 @@
 # Tiny Tapeout project information
 project:
-  title:        "ENSEIRB-MATMECA RISC-V ASIC"      # Project title
+  title:        "ENSEIRB-MATMECA RISC-V processor"      # Project title
   author:       "Mathieu Escouteloup"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "RISC-V core implementation"      # One line description of what your project does
@@ -37,21 +37,21 @@ project:
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: "UART_RX"
-  ui[1]: "BOOT"
+  ui[0]: "BOOT"
+  ui[1]: "IN1_FREE"
   ui[2]: "IN2_FREE"
-  ui[3]: "IN3_FREE"
+  ui[3]: "UART_RX"
   ui[4]: "IN4_FREE"
   ui[5]: "IN5_FREE"
   ui[6]: "IN6_FREE"
   ui[7]: "IN7_FREE"
 
   # Outputs
-  uo[0]: "UART_TX"
+  uo[0]: "OUT0_FREE"
   uo[1]: "OUT1_FREE"
   uo[2]: "OUT2_FREE"
   uo[3]: "OUT3_FREE"
-  uo[4]: "OUT4_FREE"
+  uo[4]: "UART_TX"
   uo[5]: "OUT5_FREE"
   uo[6]: "OUT6_FREE"
   uo[7]: "OUT7_FREE"
